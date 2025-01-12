@@ -116,9 +116,10 @@ const OTPScreen = ({ route }) => {
             <View style={styles.card}>
                 <Text style={styles.title}>Enter OTP</Text>
                 <Text style={styles.subtitle}>
-                    Please enter the 6-digit OTP sent to your email
+                    Please enter the 6-digit OTP sent to your email 
                     <Text style={{ fontWeight: 'bold' }}>
-                        {state?.email}
+                        {` ${state?.email}`}
+                    
                     </Text>
                 </Text>
 

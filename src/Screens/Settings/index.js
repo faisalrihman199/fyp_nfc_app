@@ -1,28 +1,60 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Appbar, TextInput, Button, Card } from 'react-native-paper';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import * as Theme from '../../Theme';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useAPI } from '../../Context/APIContext';
-import { useNavigation } from '@react-navigation/native';
 
 function SettingsScreen(props) {
   const [isEditable, setIsEditable] = useState(false);
-  const { control, handleSubmit, setValue } = useForm();
-  const {Logout}=useAPI();
-  const initialData = {
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
-    password: '',
-    phone: '1234567890',
-    address: '123 Street, City, Country',
-  };
-  const onSubmit = (data) => {
+  const { control, handleSubmit, setValue, getValues } = useForm({
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      phone: '',
+      address: '',
+    },
+  });
+
+  const { Logout, userInfo, getUser } = useAPI();
+  const localUser = getUser()?._j;
+  const isAdmin = localUser?.role === 'admin';
+
+  useEffect(() => {
+    userInfo()
+      .then((res) => {
+        if (res.data) {
+          const { firstName, lastName, email, phone, address } = res.data;
+          setValue('firstName', firstName || '');
+          setValue('lastName', lastName || '');
+          setValue('email', email || '');
+          setValue('phone', phone || '');
+          setValue('address', address || '');
+        }
+      })
+      .catch((err) => {
+        console.log('Error:', err);
+      });
+  }, []);
+
+  const onSubmit = (dt) => {
+    let data;
+    if(isAdmin){
+      data={
+        email:dt.email,
+        password:dt.password,
+      }
+    }
+    else{
+      data=dt
+    }
+
     console.log('Updated Data:', data);
-    setIsEditable(false); // Switch to read-only after submit
+    setIsEditable(false); 
   };
 
   return (
@@ -32,7 +64,7 @@ function SettingsScreen(props) {
           <Appbar.BackAction onPress={() => props.navigation.goBack()} />
         </View>
         <Text style={styles.appbarTitle}>Settings</Text>
-        <TouchableOpacity onPress={onPress=async() =>await Logout()} >
+        <TouchableOpacity onPress={async () => await Logout()}>
           <Icon name="logout" size={24} style={styles.logoutIcon} />
         </TouchableOpacity>
       </Appbar.Header>
@@ -44,61 +76,110 @@ function SettingsScreen(props) {
 
         <Card style={styles.card}>
           <Card.Content>
-            <TextInput
-              label="First Name"
-              value={initialData.firstName}
-              editable={isEditable}
-              onChangeText={(text) => setValue('firstName', text)}
-              style={styles.input}
+            {!isAdmin && (
+              <>
+                <Controller
+                  control={control}
+                  name="firstName"
+                  render={({ field: { onChange, value } }) => (
+                    <TextInput
+                      label="First Name"
+                      value={value}
+                      editable={isEditable}
+                      onChangeText={onChange}
+                      style={styles.input}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="lastName"
+                  render={({ field: { onChange, value } }) => (
+                    <TextInput
+                      label="Last Name"
+                      value={value}
+                      editable={isEditable}
+                      onChangeText={onChange}
+                      style={styles.input}
+                    />
+                  )}
+                />
+              </>
+            )}
+
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  label="Email"
+                  value={value}
+                  editable={isEditable}
+                  onChangeText={onChange}
+                  style={styles.input}
+                />
+              )}
             />
-            <TextInput
-              label="Last Name"
-              value={initialData.lastName}
-              editable={isEditable}
-              onChangeText={(text) => setValue('lastName', text)}
-              style={styles.input}
-            />
-            <TextInput
-              label="Email"
-              value={initialData.email}
-              editable={isEditable}
-              onChangeText={(text) => setValue('email', text)}
-              style={styles.input}
-            />
-            <TextInput
-              label="Phone"
-              value={initialData.phone}
-              editable={isEditable}
-              onChangeText={(text) => setValue('phone', text)}
-              style={styles.input}
-            />
-            <TextInput
-              label="Address"
-              value={initialData.address}
-              editable={isEditable}
-              onChangeText={(text) => setValue('address', text)}
-              style={styles.input}
-            />
-            {isEditable && (
-              <TextInput
-                label="Password"
-                value={initialData.password}
-                editable={isEditable}
-                onChangeText={(text) => setValue('password', text)}
-                style={styles.input}
-                secureTextEntry
+
+            {!isAdmin && (
+              <>
+                <Controller
+                  control={control}
+                  name="phone"
+                  render={({ field: { onChange, value } }) => (
+                    <TextInput
+                      label="Phone"
+                      value={value}
+                      editable={isEditable}
+                      onChangeText={onChange}
+                      style={styles.input}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="address"
+                  render={({ field: { onChange, value } }) => (
+                    <TextInput
+                      label="Address"
+                      value={value}
+                      editable={isEditable}
+                      onChangeText={onChange}
+                      style={styles.input}
+                    />
+                  )}
+                />
+              </>
+            )}
+
+            {(isEditable || isAdmin) && (
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { onChange, value } }) => (
+                  <TextInput
+                    label="Password"
+                    value={value}
+                    editable={isEditable}
+                    onChangeText={onChange}
+                    style={styles.input}
+                    secureTextEntry
+                  />
+                )}
               />
             )}
           </Card.Content>
         </Card>
 
-        <Button
-          mode="contained"
-          style={styles.submitButton}
-          onPress={handleSubmit(onSubmit)}
-        >
-          {isEditable ? 'Submit' : 'Edit Data'}
-        </Button>
+        {isEditable && (
+          <Button
+            mode="contained"
+            style={styles.submitButton}
+            onPress={handleSubmit(onSubmit)}
+          >
+            Submit
+          </Button>
+        )}
 
         <Button
           mode="outlined"
@@ -120,9 +201,9 @@ const styles = StyleSheet.create({
   appbar: {
     backgroundColor: 'white',
     elevation: 10,
-    flexDirection: 'row', // Use row layout to place icons and text in one line
-    justifyContent: 'space-between', // Spread out the elements (icon on left, title in center, logout icon on right)
-    alignItems: 'center', // Vertically center the items
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 20,
   },
   appbarLeft: {

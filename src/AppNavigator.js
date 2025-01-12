@@ -34,6 +34,7 @@ const HomeTabs = createBottomTabNavigator();
 
 function HomeTabNav() {
   const {getUser, user}=useAPI();
+  const isAdmin=getUser()?._j?.role==='admin';
 
   return (
     <HomeTabs.Navigator
@@ -57,8 +58,12 @@ function HomeTabNav() {
             } else if (route.name === 'ScanQR') {
               iconName = 'qrcode-scan';
             } else if (route.name === 'MyRecordsTab') {
-              iconName = 'archive-star';
+              iconName = 'wifi';
             }
+            else if (route.name === 'setting') {
+              iconName = 'cogs';
+            }
+            
 
             return <Icon name={iconName} size={size} color={color} />;
           },
@@ -70,26 +75,36 @@ function HomeTabNav() {
       }}
     >
 
-      
-      <HomeTabs.Screen
-        name="HomeTab"
-        component={HomeScreen}
-        options={{ tabBarLabel: 'SCAN TAG' }}
-      />
-      <HomeTabs.Screen
+      {
+        isAdmin &&
+        <HomeTabs.Screen
+          name="HomeTab"
+          component={HomeScreen}
+          options={{ tabBarLabel: 'SCAN TAG' }}
+        />
+      }
+      {/* <HomeTabs.Screen
         name="NdefTypeListTab"
         component={NdefTypeListScreen}
         options={{ title: 'WRITE NDEF' }}
-      />
-      <HomeTabs.Screen
-        name="ScanQR"
-        component={ToolKitScreen}
-        options={{ title: 'ScanQR' }}
-      />
+      /> */}
+      {
+        !isAdmin &&
+        <HomeTabs.Screen
+          name="ScanQR"
+          component={ToolKitScreen}
+          options={{ title: 'ScanQR' }}
+        />
+      }
       <HomeTabs.Screen
         name="MyRecordsTab"
         component={SavedRecordScreen}
-        options={{ title: 'MY RECORDS' }}
+        options={{ title: 'TAGS' }}
+      />
+      <HomeTabs.Screen
+        name="setting"
+        component={SettingsScreen}
+        options={{ title: 'Setting' }}
       />
     </HomeTabs.Navigator>
   );
