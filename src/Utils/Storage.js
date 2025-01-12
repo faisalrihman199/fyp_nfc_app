@@ -8,9 +8,9 @@ function createStorage(key) {
     try {
       nextList = JSON.parse(await AsyncStorage.getItem(key)) || [];
     } catch (ex) {
-      console.warn('fail to parse');
+      console.log('fail to parse');
     }
-    console.warn(nextList);
+    console.log(nextList);
     console.log(JSON.stringify(nextList));
     cache = nextList;
   }

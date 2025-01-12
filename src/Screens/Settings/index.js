@@ -3,9 +3,9 @@ import { ScrollView, Text, StyleSheet, TouchableOpacity, View } from 'react-nati
 import { Appbar, TextInput, Button, Card } from 'react-native-paper';
 import { useForm, Controller } from 'react-hook-form';
 import * as Theme from '../../Theme';
-
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useAPI } from '../../Context/APIContext';
+import{ showToast } from '../../Components/Toast';
 
 function SettingsScreen(props) {
   const [isEditable, setIsEditable] = useState(false);
@@ -20,7 +20,7 @@ function SettingsScreen(props) {
     },
   });
 
-  const { Logout, userInfo, getUser } = useAPI();
+  const { Logout, userInfo, getUser,updateUser } = useAPI();
   const localUser = getUser()?._j;
   const isAdmin = localUser?.role === 'admin';
 
@@ -42,18 +42,25 @@ function SettingsScreen(props) {
   }, []);
 
   const onSubmit = (dt) => {
-    let data;
-    if(isAdmin){
-      data={
-        email:dt.email,
-        password:dt.password,
-      }
-    }
-    else{
-      data=dt
-    }
+    
+    updateUser(dt)
+    .then((res)=>{
+      console.log("Response :", res);
+      showToast({
+        message: res.message,
+        type: 'success',
+        });
+      
+    })
+    .catch((err)=>{
+      console.log("Error :", err);
+      showToast({
+        message: err.response.data.message || "Error while updating user",
+        type: 'error',
+        });
+      
+    })
 
-    console.log('Updated Data:', data);
     setIsEditable(false); 
   };
 

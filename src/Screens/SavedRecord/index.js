@@ -48,7 +48,6 @@ function SavedRecordScreen(props) {
       category:category,
       id
     }
-    
     updateTag(data)
     .then((res)=>{
       console.log("Response :", res);

@@ -76,6 +76,13 @@ const APIProvider = ({ children }) => {
     const response = await axios.get(url,getConfig());
     return response.data;
   }
+  const updateUser=async(data)=>{
+    console.log("data is :", data);
+    
+    const url = `${server}/auth/updateUser`;
+    const response = await axios.post(url,data,getConfig());
+    return response.data;
+  }
   
   const sendOTP=async (data) => {
     console.log("Send OTP for :", data);
@@ -129,7 +136,7 @@ const APIProvider = ({ children }) => {
 
   const provider = {
     //Auth
-    login,getUser,Logout,changePassword,verifyOTP,sendOTP,userInfo,
+    login,getUser,Logout,changePassword,verifyOTP,sendOTP,userInfo,updateUser,
     
     //Customer
     verifyOTP,

@@ -10,6 +10,7 @@ import {
   Platform,
   Alert,
   TouchableOpacity,
+  Linking,
 } from 'react-native';
 import NfcProxy from '../../NfcProxy';
 import NfcManager, { NfcEvents, NfcTech } from 'react-native-nfc-manager';
@@ -17,6 +18,7 @@ import { Button, IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useAPI } from '../../Context/APIContext';
 import { showToast } from '../../Components/Toast';
+
 
 
 function HomeScreen(props) {
