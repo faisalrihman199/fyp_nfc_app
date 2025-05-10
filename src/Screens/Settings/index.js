@@ -58,7 +58,6 @@ function SettingsScreen(props) {
         message: err.response.data.message || "Error while updating user",
         type: 'error',
         });
-      
     })
 
     setIsEditable(false); 

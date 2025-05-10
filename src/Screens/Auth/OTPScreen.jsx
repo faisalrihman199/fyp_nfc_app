@@ -122,7 +122,6 @@ const OTPScreen = ({ route }) => {
                     
                     </Text>
                 </Text>
-
                 {/* OTP Input Fields */}
                 <View style={styles.otpContainer}>
                     {otp.map((digit, index) => (
