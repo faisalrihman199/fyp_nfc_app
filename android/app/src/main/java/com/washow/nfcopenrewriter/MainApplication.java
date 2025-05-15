@@ -1,5 +1,4 @@
 package com.washow.nfcopenrewriter;
-
 import android.app.Application;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
@@ -9,6 +8,7 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
 import java.util.List;
+import com.washow.nfcopenrewriter.SmsPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -25,6 +25,7 @@ public class MainApplication extends Application implements ReactApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
+        packages.add(new SmsPackage()); //
           return packages;
         }
 
